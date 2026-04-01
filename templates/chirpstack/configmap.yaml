@@ -3,9 +3,9 @@ kind: ConfigMap
 metadata:
   name: {{ include "chirpstack.core" . }}
   labels:
-    {{- include "chirpstack.labels" . | nindent 4 }}
+    {{ include "chirpstack.labels" . | nindent 4 }}
 data:
-{{- if not .Values.chirpstack.existingChirpstackConfigSecret }}
+{{ if not .Values.chirpstack.existingChirpstackConfigSecret }}
   chirpstack.toml: |-
     [logging]
     level="{{ .Values.chirpstack.logLevel }}"
@@ -17,9 +17,9 @@ data:
 
     [redis]
     servers=[
-      {{- range .Values.chirpstack.redis.servers }}
+{{ range .Values.chirpstack.redis.servers }}
       "{{ . }}",
-      {{- end }}
+{{ end }}
     ]
     tls_enabled={{ .Values.chirpstack.redis.tlsEnabled }}
     cluster={{ .Values.chirpstack.redis.cluster }}
@@ -27,19 +27,19 @@ data:
     [network]
     net_id="{{ .Values.chirpstack.network.netId }}"
     enabled_regions=[
-      {{- range .Values.chirpstack.network.enabledRegions }}
+{{ range .Values.chirpstack.network.enabledRegions }}
       "{{ . }}",
-      {{- end }}
+{{ end }}
     ]
 
     [api]
     bind="0.0.0.0:{{ .Values.chirpstack.http.containerPort }}"
     secret="{{ .Values.chirpstack.apiSecret }}"
 
-{{- if .Values.chirpstack.metrics.enabled }}
+{{ if .Values.chirpstack.metrics.enabled }}
     [monitoring]
     bind="0.0.0.0:{{ .Values.chirpstack.metrics.port }}"
-{{- end }}
+{{ end }}
 
   eu868.toml: |-
     [[regions]]
@@ -55,8 +55,8 @@ data:
           command_topic="{{ .Values.chirpstack.regions.eu868.mqtt.commandTopic }}"
           server="tcp://{{ .Values.chirpstack.regions.eu868.mqtt.host | default .Values.chirpstack.regions.mqtt.host }}:{{ .Values.chirpstack.regions.eu868.mqtt.port | default .Values.chirpstack.regions.mqtt.port }}"
 
-  {{- range $key, $value := .Values.chirpstack.extraConfigFiles }}
+{{ range $key, $value := .Values.chirpstack.extraConfigFiles }}
   {{ $key }}: |-
 {{ $value | nindent 4 }}
-  {{- end }}
-{{- end }}
+{{ end }}
+{{ end }}
